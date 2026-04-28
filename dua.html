@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link rel="icon" href="logo.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="logo.png">
+    <meta charset="UTF-8">
+    <title>المختار في الأدعية - اليقين</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;900&display=swap');
+
+       body { 
+            font-family: 'Tajawal', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            height: 100dvh; 
+            display: flex; 
+            flex-direction: column; 
+            background: linear-gradient(135deg, #07101b, #122136, #0d2825); 
+            color: #fff; 
+            overflow: hidden; 
+        }
+
+        .header { 
+            flex-shrink: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px; 
+            position: relative; 
+            z-index: 10; 
+            border-bottom: 1px solid rgba(255,215,0,0.2); 
+        }
+        
+        .back-btn { 
+            position: absolute; 
+            right: 20px; 
+            background: rgba(255,215,0,0.15); 
+            border: 1px solid #FFD700; 
+            color: #FFD700; 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 1.2rem; 
+            cursor: pointer; 
+            text-decoration: none; 
+            transition: 0.3s; 
+        }
+        
+        .page-title { 
+            margin: 0; 
+            font-size: 1.5rem; 
+            color: #FFD700; 
+            font-weight: 900; 
+        }
+
+        .categories-grid { 
+            flex: 1; 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 15px; 
+            padding: 20px; 
+            padding-bottom: 80px; 
+            overflow-y: auto; 
+            box-sizing: border-box; 
+            align-content: start; 
+        }
+        .category-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 20px 10px; text-align: center; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .category-card:active { transform: scale(0.95); background: rgba(255, 215, 0, 0.1); }
+        .cat-icon { font-size: 3rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4)); transition: opacity 0.2s; }
+        .cat-title { font-size: 1.1rem; font-weight: bold; color: #e0e0e0; }
+
+        /* الأيقونة الطائرة (Hero Animation) */
+        .flying-ghost { position: fixed; z-index: 9999; font-size: 3rem; pointer-events: none; transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1); filter: drop-shadow(0 10px 20px rgba(255,215,0,0.6)); }
+        .flying-ghost.fly-center { top: 10% !important; left: 50% !important; transform: translateX(-50%) scale(1.8) !important; }
+
+        /* نافذة الأدعية المنسدلة */
+        .dua-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 12, 20, 0.95); backdrop-filter: blur(15px); z-index: 1000; opacity: 0; pointer-events: none; transition: 0.4s ease; display: flex; flex-direction: column; }
+        .dua-modal.show { opacity: 1; pointer-events: auto; }
+        
+        .modal-header { height: 30%; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+        .modal-icon { font-size: 5.4rem; opacity: 0; transition: opacity 0.3s; margin-top: 20px; filter: drop-shadow(0 0 20px rgba(255,215,0,0.5));}
+        .modal-title { font-size: 1.6rem; color: #FFD700; font-weight: 900; margin-top: 15px; opacity: 0; transform: translateY(20px); transition: 0.5s 0.3s; }
+        .dua-modal.show .modal-title { opacity: 1; transform: translateY(0); }
+        
+        .close-modal { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+
+        .dua-list { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 50px; opacity: 0; transform: translateY(30px); transition: 0.6s 0.4s; }
+        .dua-modal.show .dua-list { opacity: 1; transform: translateY(0); }
+        
+        .dua-item { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .dua-text { font-size: 1.3rem; line-height: 1.8; color: #fff; font-weight: bold; text-align: justify; }
+        .dua-source { display: block; margin-top: 15px; color: #FFD700; font-size: 0.9rem; text-align: left; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="index.html" class="back-btn">❯</a>
+        <h1 class="page-title">🤲 المختار من الأدعية</h1>
+    </div>
+
+    <div class="categories-grid" id="grid"></div>
+
+    <div class="dua-modal" id="modal">
+        <div class="modal-header">
+            <button class="close-modal" onclick="closeModal()">✖</button>
+            <div class="modal-icon" id="modal-icon"></div>
+            <div class="modal-title" id="modal-title"></div>
+        </div>
+        <div class="dua-list" id="dua-list"></div>
+    </div>
+
+    <script>
+       const duasData = {
+            "praise": { 
+                title: "حمد الله والثناء عليه", icon: "✨", 
+                duas: [
+                    {text: "اللَّهُمَّ لَكَ الْحَمْدُ كُلُّهُ، اللَّهُمَّ لَا قَابِضَ لِمَا بَسَطْتَ، وَلَا بَاسِطَ لِمَا قَبَضْتَ، وَلَا هَادِيَ لِمَا أَضْلَلْتَ، وَلَا مُضِلَّ لِمَا هَدَيْتَ.", source: "[رواه أحمد]"}, 
+                    {text: "رَبَّنَا وَلَكَ الْحَمْدُ، حَمْدًا كَثِيرًا طَيِّبًا مُبَارَكًا فِيهِ.", source: "[رواه البخاري]"},
+                    {text: "اللَّهُمَّ لَكَ الْحَمْدُ أَنْتَ نُورُ السَّمَاوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ، وَلَكَ الْحَمْدُ أَنْتَ قَيِّمُ السَّمَاوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ.", source: "[رواه البخاري ومسلم]"},
+                    {text: "سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ، وَتَبَارَكَ اسْمُكَ، وَتَعَالَى جَدُّكَ، وَلَا إِلَهَ غَيْرُكَ.", source: "[رواه مسلم]"},
+                    {text: "اللَّهُمَّ رَبَّنَا لَكَ الْحَمْدُ، مِلْءَ السَّمَاوَاتِ، وَمِلْءَ الْأَرْضِ، وَمِلْءَ مَا بَيْنَهُمَا، وَمِلْءَ مَا شِئْتَ مِنْ شَيْءٍ بَعْدُ.", source: "[رواه مسلم]"},
+                    {text: "الْحَمْدُ لِلَّهِ الَّذِي بِنِعْمَتِهِ تَتِمُّ الصَّالِحَاتُ.", source: "[رواه ابن ماجه]"}
+                ] 
+            },
+            "maghfirah": { 
+                title: "المغفرة والرحمة", icon: "💧", 
+                duas: [
+                    {text: "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي.", source: "[رواه البخاري]"}, 
+                    {text: "رَبَّنَا ظَلَمْنَا أَنْفُسَنَا وَإِنْ لَمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ الخَاسِرِينَ.", source: "[الأعراف: 23]"},
+                    {text: "اللَّهُمَّ اغْفِرْ لِي خَطِيئَتِي وَجَهْلِي، وَإِسْرَافِي فِي أَمْرِي، وَمَا أَنْتَ أَعْلَمُ بِهِ مِنِّي.", source: "[رواه البخاري ومسلم]"},
+                    {text: "اللَّهُمَّ إِنَّكَ عَفُوٌّ كَرِيمٌ تُحِبُّ العَفْوَ فَاعْفُ عَنِّي.", source: "[رواه الترمذي]"},
+                    {text: "رَبِّ اغْفِرْ لِي وَتُبْ عَلَيَّ إِنَّكَ أَنْتَ التَّوَّابُ الْغَفُورُ.", source: "[رواه أبو داود]"},
+                    {text: "اللَّهُمَّ اغْفِرْ لِي ذَنْبِي كُلَّهُ، دِقَّهُ وَجِلَّهُ، وَأَوَّلَهُ وَآخِرَهُ، وَعَلَانِيَتَهُ وَسِرَّهُ.", source: "[رواه مسلم]"}
+                ] 
+            },
+            "tawakkul": { 
+                title: "التوكل والثبات", icon: "🛡️", 
+                duas: [
+                    {text: "حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ العَرْشِ العَظِيمِ.", source: "[التوبة: 129]"}, 
+                    {text: "يَا مُقَلِّبَ القُلُوبِ ثَبِّتْ قَلْبِي عَلَى دِينِكَ.", source: "[رواه الترمذي]"},
+                    {text: "اللَّهُمَّ رَحْمَتَكَ أَرْجُو، فَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ، وَأَصْلِحْ لِي شَأْنِي كُلَّهُ، لَا إِلَهَ إِلَّا أَنْتَ.", source: "[رواه أبو داود]"},
+                    {text: "بِسْمِ اللهِ، تَوَكَّلْتُ عَلَى اللهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ.", source: "[رواه أبو داود]"},
+                    {text: "اللَّهُمَّ إِنِّي أَعُوذُ بِعَظَمَتِكَ أَنْ أُغْتَالَ مِنْ تَحْتِي.", source: "[رواه النسائي]"},
+                    {text: "اللَّهُمَّ مُصَرِّفَ القُلُوبِ صَرِّفْ قُلُوبَنَا عَلَى طَاعَتِكَ.", source: "[رواه مسلم]"}
+                ] 
+            },
+            "rizq": { 
+                title: "سعة الرزق وقضاء الدين", icon: "💰", 
+                duas: [
+                    {text: "اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ.", source: "[رواه الترمذي]"}, 
+                    {text: "رَبِّ إِنِّي لِمَا أَنْزَلْتَ إِلَيَّ مِنْ خَيْرٍ فَقِيرٌ.", source: "[القصص: 24]"},
+                    {text: "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلًا مُتَقَبَّلًا.", source: "[رواه ابن ماجه]"},
+                    {text: "اللَّهُمَّ رَبَّ السَّمَاوَاتِ السَّبْعِ... اقْضِ عَنَّا الدَّيْنَ، وَأَغْنِنَا مِنَ الْفَقْرِ.", source: "[رواه مسلم]"},
+                    {text: "اللَّهُمَّ ارْزُقْنِي رِزْقًا حَلَالًا طَيِّبًا مُبَارَكًا فِيهِ، كَمَا تُحِبُّ يَا رَبَّنَا وَتَرْضَى.", source: "[دعاء مأثور]"},
+                    {text: "اللَّهُمَّ يَا بَاسِطَ الْيَدَيْنِ بِالْعَطَايَا، ارْزُقْنِي مِنْ فَضْلِكَ الْعَظِيمِ.", source: "[دعاء مأثور]"}
+                ] 
+            },
+            "huzn": { 
+                title: "الهم والحزن والكرب", icon: "😔", 
+                duas: [
+                    {text: "لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ.", source: "[الأنبياء: 87]"}, 
+                    {text: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الهَمِّ وَالحَزَنِ، وَالعَجْزِ وَالكَسَلِ، وَالبُخْلِ وَالجُبْنِ، وَضَلَعِ الدَّيْنِ وَغَلَبَةِ الرِّجَالِ.", source: "[رواه البخاري]"},
+                    {text: "اللَّهُمَّ لَا سَهْلَ إِلَّا مَا جَعَلْتَهُ سَهْلًا، وَأَنْتَ تَجْعَلُ الحَزْنَ إِذَا شِئْتَ سَهْلًا.", source: "[رواه ابن حبان]"},
+                    {text: "لَا إِلَهَ إِلَّا اللهُ الْعَظِيمُ الْحَلِيمُ، لَا إِلَهَ إِلَّا اللهُ رَبُّ الْعَرْشِ الْعَظِيمِ، لَا إِلَهَ إِلَّا اللهُ رَبُّ السَّمَاوَاتِ وَرَبُّ الْأَرْضِ.", source: "[رواه البخاري ومسلم]"},
+                    {text: "يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ.", source: "[رواه الترمذي]"},
+                    {text: "اللَّهُمَّ إِنِّي عَبْدُكَ، ابْنُ عَبْدِكَ، ابْنُ أَمَتِكَ، نَاصِيَتِي بِيَدِكَ، مَاضٍ فِيَّ حُكْمُكَ، عَدْلٌ فِيَّ قَضَاؤُكَ...", source: "[رواه أحمد]"}
+                ] 
+            },
+            "shifa": { 
+                title: "الشفاء والعافية", icon: "❤️‍🩹", 
+                duas: [
+                    {text: "اللَّهُمَّ رَبَّ النَّاسِ أَذْهِبِ البَاسَ، اشْفِهِ وَأَنْتَ الشَّافِي، لَا شِفَاءَ إِلَّا شِفَاؤُكَ، شِفَاءً لَا يُغَادِرُ سَقَمًا.", source: "[رواه البخاري ومسلم]"}, 
+                    {text: "أَسْأَلُ اللَّهَ العَظِيمَ، رَبَّ العَرْشِ العَظِيمِ، أَنْ يَشْفِيَكَ. (7 مرات)", source: "[رواه الترمذي]"},
+                    {text: "بِسْمِ اللهِ (ثلاثاً)، أَعُوذُ بِاللهِ وَقُدْرَتِهِ مِنْ شَرِّ مَا أَجِدُ وَأُحَاذِرُ (سبعاً).", source: "[رواه مسلم]"},
+                    {text: "اللَّهُمَّ عَافِنِي فِي بَدَنِي، اللَّهُمَّ عَافِنِي فِي سَمْعِي، اللَّهُمَّ عَافِنِي فِي بَصَرِي، لَا إِلَهَ إِلَّا أَنْتَ.", source: "[رواه أبو داود]"},
+                    {text: "بِسْمِ اللهِ أَرْقِيكَ، مِنْ كُلِّ شَيْءٍ يُؤْذِيكَ، مِنْ شَرِّ كُلِّ نَفْسٍ أَوْ عَيْنِ حَاسِدٍ، اللهُ يَشْفِيكَ.", source: "[رواه مسلم]"},
+                    {text: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ.", source: "[البقرة: 201]"}
+                ] 
+            },
+            "knowledge": { 
+                title: "طلب العلم والفهم", icon: "📚", 
+                duas: [
+                    {text: "رَبِّ زِدْنِي عِلْمًا.", source: "[طه: 114]"}, 
+                    {text: "اللَّهُمَّ انْفَعْنِي بِمَا عَلَّمْتَنِي، وَعَلِّمْنِي مَا يَنْفَعُنِي، وَزِدْنِي عِلْمًا.", source: "[رواه الترمذي]"},
+                    {text: "رَبِّ اشْرَحْ لِي صَدْرِي * وَيَسِّرْ لِي أَمْرِي * وَاحْلُلْ عُقْدَةً مِنْ لِسَانِي * يَفْقَهُوا قَوْلِي.", source: "[طه: 25-28]"},
+                    {text: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عِلْمٍ لَا يَنْفَعُ، وَمِنْ قَلْبٍ لَا يَخْشَعُ، وَمِنْ نَفْسٍ لَا تَشْبَعُ، وَمِنْ دَعْوَةٍ لَا يُسْتَجَابُ لَهَا.", source: "[رواه مسلم]"},
+                    {text: "اللَّهُمَّ فَقِّهْنِي فِي الدِّينِ.", source: "[رواه البخاري]"},
+                    {text: "اللَّهُمَّ اهْدِنِي وَسَدِّدْنِي.", source: "[رواه مسلم]"}
+                ] 
+            },
+            "jamea": { 
+                title: "أدعية عامة جامعة", icon: "🌟", 
+                duas: [
+                    {text: "اللَّهُمَّ اغْفِرْ لِي وَارْحَمْنِي وَاهْدِنِي وَعَافِنِي وَارْزُقْنِي.", source: "[رواه مسلم]"}, 
+                    {text: "اللَّهُمَّ إِنِّي أَسْأَلُكَ العَافِيَةَ فِي الدُّنْيَا وَالآخِرَةِ.", source: "[رواه الترمذي]"},
+                    {text: "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنَ الْخَيْرِ كُلِّهِ عَاجِلِهِ وَآجِلِهِ، مَا عَلِمْتُ مِنْهُ وَمَا لَمْ أَعْلَمْ...", source: "[رواه ابن ماجه]"},
+                    {text: "اللَّهُمَّ إِنِّي أَسْأَلُكَ مُوجِبَاتِ رَحْمَتِكَ، وَعَزَائِمَ مَغْفِرَتِكَ، وَالسَّلَامَةَ مِنْ كُلِّ إِثْمٍ، وَالْغَنِيمَةَ مِنْ كُلِّ بِرٍّ.", source: "[رواه الحاكم]"},
+                    {text: "اللَّهُمَّ أَصْلِحْ لِي دِينِي الَّذِي هُوَ عِصْمَةُ أَمْرِي، وَأَصْلِحْ لِي دُنْيَايَ الَّتِي فِيهَا مَعَاشِي...", source: "[رواه مسلم]"},
+                    {text: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ زَوَالِ نِعْمَتِكَ، وَتَحَوُّلِ عَافِيَتِكَ، وَفُجَاءَةِ نِقْمَتِكَ، وَجَمِيعِ سَخَطِكَ.", source: "[رواه مسلم]"}
+                ] 
+            }
+        };
+        const grid = document.getElementById('grid');
+        Object.keys(duasData).forEach(key => {
+            const data = duasData[key];
+            const card = document.createElement('div');
+            card.className = 'category-card';
+            card.innerHTML = `<div class="cat-icon" id="icon-${key}">${data.icon}</div><div class="cat-title">${data.title}</div>`;
+            card.onclick = (e) => openModal(key, card.querySelector('.cat-icon'));
+            grid.appendChild(card);
+        });
+
+        function openModal(key, iconElement) {
+            const data = duasData[key];
+            
+            // 1. حركة الطيران السحرية (Hero Animation)
+            const rect = iconElement.getBoundingClientRect();
+            const ghost = document.createElement('div');
+            ghost.className = 'flying-ghost';
+            ghost.textContent = data.icon;
+            ghost.style.left = rect.left + 'px';
+            ghost.style.top = rect.top + 'px';
+            document.body.appendChild(ghost);
+
+            iconElement.style.opacity = '0'; // إخفاء الأصلي مؤقتاً
+            
+            const modal = document.getElementById('modal');
+            const modalIcon = document.getElementById('modal-icon');
+            
+            modal.classList.add('show');
+            document.getElementById('modal-title').textContent = data.title;
+            
+            // تعبئة القائمة
+            const list = document.getElementById('dua-list');
+            list.innerHTML = '';
+            data.duas.forEach(d => {
+                list.innerHTML += `<div class="dua-item"><div class="dua-text">${d.text}</div><div class="dua-source">${d.source}</div></div>`;
+            });
+
+            // بدء الطيران
+            setTimeout(() => { ghost.classList.add('fly-center'); }, 20);
+
+            // إنهاء الطيران ونقل الأيقونة للنافذة
+            setTimeout(() => {
+                modalIcon.textContent = data.icon;
+                modalIcon.style.opacity = '1';
+                ghost.remove();
+                iconElement.style.opacity = '1'; 
+            }, 600);
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+            document.getElementById('modal-icon').style.opacity = '0';
+        }
+    </script>
+    
+    <audio id="audio-click" src="./audio/click.mp3" preload="auto"></audio>
+    <script>
+        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); }
+        document.addEventListener('click', (e) => {
+            if(e.target.closest('.category-card, .close-modal, .back-btn') && localStorage.getItem('yaqeen_sound') !== 'false') {
+                document.getElementById('audio-click').currentTime = 0; document.getElementById('audio-click').play().catch(()=>{});
+            }
+        });
+    </script>
+</body>
+</html>
