@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yaqeen-final-v34'; // نسخة جديدة لنسف القديم
+const CACHE_NAME = 'yaqeen-final-v35'; // نسخة جديدة لنسف القديم
 
 const ASSETS = [
     './',

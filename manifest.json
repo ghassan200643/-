@@ -4,8 +4,8 @@
   "description": "تطبيقك الشامل لمواقيت الصلاة الدقيقة لمدينة بغداد، يحتوي على الأذكار، حصن المسلم، والسنن اليومية. يعمل بدون إنترنت.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#050a0e",
-  "theme_color": "#FFD700",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "icons": [
     {
       "src": "logo.png",
