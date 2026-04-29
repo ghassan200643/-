@@ -1,0 +1,792 @@
+/* =========================================
+   🚀 التوسيط الإجباري ومنع القفز (الحل الجذري)
+   ========================================= */
+
+html {
+    background-color: #050a0e !important; /* لون الخلفية للشاشات الكبيرة */
+    height: 100dvh !important;
+    overflow: hidden !important; /* يمنع الشاشة من القفز نهائياً في الموبايل */
+    display: flex !important; /* السحر الذي سيقوم بالتوسيط */
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+body {
+    width: 100% !important;
+    max-width: 480px !important; /* عرض الهاتف بالضبط */
+    height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important; /* يسمح بالتمرير داخل التطبيق فقط */
+    background: inherit; /* يأخذ خلفية التطبيق */
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.9) !important; /* إعطاء ظل فخم كأنه هاتف حقيقي */
+    border-left: 1px solid rgba(255, 215, 0, 0.1); /* إطار ذهبي خفيف */
+    border-right: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+/* تنظيف الهوامش لأي عنصر داخل التطبيق */
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+.app-wrapper, .container, .hisn-container {
+    height: 100%;
+    overflow-y: auto; /* السماح بالتمرير داخل المحتوى فقط */
+    overflow-x: hidden;
+    padding-bottom: 90px; /* لحماية المحتوى من أزرار التنقل السفلية */
+}
+
+
+
+
+
+/* إيقاف الزووم والتحريك المطاطي بالقوة في كل التطبيق */
+* {
+    touch-action: manipulation !important;
+}
+/* إزالة أي مساحات فارغة أو هوامش في التطبيق بالكامل */
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* التأكد من التصاق الشريط العلوي بالسقف */
+.header, header, .top-bar {
+    margin-top: 0 !important;
+    top: 0 !important;
+}
+
+html, body {
+    overscroll-behavior-y: none !important;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+
+/* 🚀 الثبات التام والسرعة */
+* {
+    touch-action: manipulation !important; /* يمنع الزووم نهائياً */
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+html, body {
+    overscroll-behavior-y: none !important; /* يمنع الشاشة من التمدد (الباونس) المطاطي المزعج */
+    max-width: 100vw;
+    overflow-x: hidden;
+    background-color: #050a0e !important;
+}
+
+/* تسريع الانتقال بين الصفحات */
+body {
+    animation: fadeIn 0.2s ease-out forwards;
+}
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* =====================================================
+   اليقين - الواجهة الزجاجية المضيئة (بحدود مرتبة)
+   style.css
+   ===================================================== */
+:root {
+    --bg-gradient: linear-gradient(135deg, #0f2027, #203a43, #2c5364); 
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --accent-glow: #00e5ff; 
+    --accent-gold: #FFD700;
+    --text-primary: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.7);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; width: 100%; display: flex; justify-content: center; background: #050a0e; }
+body { height: 100%; width: 100%; overflow-x: hidden; font-family: 'Tajawal', sans-serif; position: relative; }
+body { 
+    background: var(--bg-gradient); 
+    background-size: 200% 200%;
+    animation: gradientBG 15s ease infinite; 
+    color: var(--text-primary); 
+    display: flex; flex-direction: column; 
+    max-width: 520px; margin: 0 auto; 
+    border-left: 1px solid rgba(0, 229, 255, 0.2);
+    border-right: 1px solid rgba(0, 229, 255, 0.2);
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ─── HEADER (تم توسيط المصباح وإضافة الحركة) ─── */
+.app-header {
+    height: 70px; display: flex; align-items: center; justify-content: space-between; 
+    padding: 0 25px; background: transparent; z-index: 10; margin-top: 10px;
+    border-bottom: 1px solid rgba(0, 229, 255, 0.2); padding-bottom: 10px;
+    position: relative; /* ضروري جداً للتوسيط المطلق */
+}
+.app-title { font-size: 1.8rem; font-weight: 900; color: var(--accent-gold); text-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+.icon-btn { background: var(--glass-bg); border: 1.5px solid var(--glass-border); border-radius: 12px; cursor: pointer; color: var(--text-primary); font-size: 1.4rem; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: 0.3s; }
+.icon-btn:hover, .icon-btn:active { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 229, 255, 0.3); border-color: var(--accent-glow); }
+.menu-btn { flex-direction: column; gap: 5px; }
+.menu-btn span { display: block; height: 2px; width: 20px; background: var(--text-primary); transition: 0.3s; }
+
+/* خدعة توسيط المصباح في المنتصف تماماً */
+.app-header .icon-btn#btn-tip {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* حركة المصباح (البطل) عند الضغط */
+@keyframes popAndRise {
+    0% { transform: translateX(-50%) translateY(0) scale(1); }
+    30% { transform: translateX(-50%) translateY(10px) scale(0.9); }
+    60% { transform: translateX(-50%) translateY(-5px) scale(1.4); }
+    100% { transform: translateX(-50%) translateY(0) scale(1); }
+}
+.icon-btn#btn-tip.animate-pop { animation: popAndRise 0.8s ease-out; }
+
+/* ─── DATE BAR (تم التكبير هنا) ─── */
+.date-bar { height: 75px; display: flex; align-items: center; justify-content: center; gap: 15px; padding: 0 16px; flex-shrink: 0; }
+.date-pill { padding: 10px 18px; border-radius: 25px; font-size: 1rem; font-weight: 700; background: var(--glass-bg); backdrop-filter: blur(8px); border: 1.5px solid var(--glass-border); color: var(--text-muted); transition: 0.3s;}
+.date-pill.active { background: rgba(0, 229, 255, 0.15); color: var(--accent-glow); border-color: var(--accent-glow); box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); font-size: 1.15rem; padding: 10px 24px; }
+.date-icon { font-size: 1.2rem; margin-left: 6px; }
+
+/* ─── COUNTDOWN CARD ─── */
+.countdown-card { 
+    margin: 10px 20px; height: 130px; display: flex; align-items: center; justify-content: space-between; 
+    background: var(--glass-bg); backdrop-filter: blur(15px); border-radius: 25px; 
+    border: 1.5px solid rgba(0, 229, 255, 0.3); padding: 0 15px; flex-shrink: 0; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.05);
+}
+.countdown-content { flex: 1; text-align: center; }
+.countdown-label { font-size: 1.1rem; font-weight: 700; color: var(--accent-gold); margin-bottom: 5px; }
+.countdown-timer { font-size: 2.8rem; font-weight: 900; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.5); direction: ltr; font-variant-numeric: tabular-nums; }
+.nav-arrow { background: rgba(255, 255, 255, 0.1); border: 1.5px solid var(--glass-border); color: #fff; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.2rem; transition: 0.3s; flex-shrink: 0; }
+.nav-arrow:hover, .nav-arrow:active { background: var(--accent-glow); color: #000; border-color: var(--accent-glow); transform: scale(1.1); box-shadow: 0 0 15px var(--accent-glow);}
+
+/* ─── PRAYER LIST ─── */
+.prayer-list { flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; padding: 10px 20px; overflow: hidden; gap: 8px; }
+.prayer-row { 
+    display: flex; align-items: center; justify-content: space-between; padding: 0 25px; 
+    border-radius: 20px; background: rgba(0,0,0,0.2); border: 1.5px solid rgba(255,255,255,0.1); 
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); flex: 1; max-height: 70px;
+}
+.prayer-row.active-prayer { 
+    background: rgba(0, 229, 255, 0.1); border: 1.5px solid var(--accent-glow); 
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.2), inset 0 0 10px rgba(0, 229, 255, 0.1);
+    transform: scale(1.04) translateY(-2px); 
+}
+.prayer-name { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); transition: 0.3s;}
+.prayer-time { font-size: 1.3rem; font-weight: 900; color: var(--text-muted); direction: ltr; transition: 0.3s;}
+.prayer-row.active-prayer .prayer-name, .prayer-row.active-prayer .prayer-time { color: var(--accent-glow); text-shadow: 0 0 10px rgba(0,229,255,0.5); }
+
+/* ─── BOTTOM NAV ─── */
+.bottom-nav { 
+    height: 85px; display: flex; align-items: center; justify-content: space-around; 
+    background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(20px);
+    border-top: 1.5px solid rgba(0, 229, 255, 0.2); border-radius: 30px 30px 0 0; margin-top: 5px;
+}
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; text-decoration: none; color: var(--text-muted); flex: 1; font-size: 0.75rem; transition: 0.3s;}
+.nav-item:hover, .nav-item:active { color: var(--accent-glow); transform: translateY(-5px); }
+.nav-icon { font-size: 1.5rem; filter: grayscale(50%); transition: 0.3s; }
+.nav-item:hover .nav-icon, .nav-item:active .nav-icon { filter: grayscale(0%) drop-shadow(0 0 8px var(--accent-glow)); }
+.nav-label { font-weight: 700; }
+
+/* ─── SIDE MENU & LAMP ─── */
+.menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 200; opacity: 0; pointer-events: none; transition: 0.4s; }
+.menu-overlay.visible { opacity: 1; pointer-events: all; }
+.side-menu { position: fixed; top: 0; right: -300px; width: 300px; height: 100%; background: rgba(10, 20, 25, 0.95); backdrop-filter: blur(20px); border-left: 2px solid var(--accent-glow); z-index: 300; transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.5); }
+.side-menu.open { right: 0; }
+.menu-header { padding: 40px 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.menu-logo { font-size: 1.8rem; font-weight: 900; color: var(--accent-glow); text-shadow: 0 0 10px rgba(0,229,255,0.5); }
+.menu-nav { flex: 1; display: flex; flex-direction: column; padding: 20px 0; }
+.menu-link { display: block; padding: 16px 30px; font-size: 1.1rem; font-weight: 700; color: var(--text-muted); text-decoration: none; border-right: 4px solid transparent; transition: 0.3s; }
+.menu-link:hover { background: rgba(0, 229, 255, 0.1); color: var(--accent-glow); border-right-color: var(--accent-glow); padding-right: 40px;}
+.menu-footer { border-top: 1px solid rgba(255,255,255,0.1); padding: 20px 0; }
+
+/* ─── نافذة المصباح السحري (للتصوير والسكرين شوت) ─── */
+.lamp-modal { 
+    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(15px); 
+    z-index: 999; display: flex; justify-content: center; align-items: center; 
+    opacity: 0; pointer-events: none; transition: 0.5s ease; 
+}
+.lamp-modal.show { opacity: 1; pointer-events: all; }
+
+.lamp-content { 
+    background: radial-gradient(circle at center, rgba(0, 229, 255, 0.15) 0%, transparent 70%); 
+    padding: 50px 20px; width: 92%; max-width: 450px; text-align: center; 
+    transform: scale(0.9); transition: 0.5s; 
+    border-radius: 25px; border: 1.5px solid rgba(0, 229, 255, 0.3);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5), inset 0 0 15px rgba(255,255,255,0.05);
+    position: relative;
+}
+.lamp-modal.show .lamp-content { transform: scale(1); }
+
+/* زر إكس مرتب وأنيق */
+.close-lamp { 
+    position: absolute; top: 15px; right: 20px; font-size: 1.8rem; color: rgba(255,255,255,0.4); 
+    background: rgba(255,255,255,0.07); border: none; cursor: pointer; transition: 0.3s; 
+    width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.close-lamp:hover { color: var(--accent-glow); background: rgba(255,255,255,0.15); transform: rotate(90deg); }
+
+.lamp-icon-big { font-size: 4.5rem; margin-bottom: 25px; filter: drop-shadow(0 0 25px var(--accent-glow)); animation: floatLamp 3s ease-in-out infinite; }
+@keyframes floatLamp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); filter: drop-shadow(0 0 40px var(--accent-glow)); } }
+
+/* النص متوسط وجذاب */
+.lamp-text { 
+    font-size: 1.6rem; line-height: 1.8; color: #fff; font-weight: 900; 
+    text-shadow: 0 0 15px rgba(0, 229, 255, 0.6); text-align: center; margin: 0 auto;
+}
+
+
+/* =====================================================
+   حركة طيران المصباح الجريئة (Flying Lamp) - إضافة جديدة
+   ===================================================== */
+
+/* صنف لتجميد المصباح الأصلي في مكانه مؤقتاً (سيكون شفافاً) */
+.btn-tip-hidden { visibility: hidden !important; opacity: 0 !important; }
+
+/* المصباح الطائر الذي سيظهر فجأة ويطير */
+.flying-lamp-ghost {
+    position: fixed; /* يطير فوق كل شيء */
+    z-index: 1000; /* أعلى طبقة */
+    font-size: 1.4rem; /* نفس حجم المصباح الأصلي */
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none; /* لا يعيق الضغط */
+    transition: none; /* لا نريد انتقال في الإعداد الأول */
+    filter: drop-shadow(0 0 10px var(--accent-glow));
+}
+
+/* صنف تفعيل الطيران (سيتم إضافته بالجافاسكريبت) */
+.flying-lamp-ghost.flying {
+    /* ينتقل للمنتصف بسرعة ويصبح كبيراً */
+    transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1); /* حركة سريعة وحازمة */
+    left: 50% !important;
+    top: 40% !important; /* يستقر فوق منتصف الشاشة قليلاً */
+    transform: translate(-50%, -50%) scale(4); /* يكبر جداً ليصبح هو الأيقونة الكبيرة */
+    font-size: 4.5rem; /* حجم الأيقونة الكبيرة في المودال */
+    filter: drop-shadow(0 0 30px var(--accent-glow));
+}
+
+
+
+
+
+
+
+
+/* =====================================================
+   الخلفيات الخمسة المتحركة (تم تعديلها لتطفو فوق الأزرار)
+   ===================================================== */
+body.theme-botanical { background: linear-gradient(135deg, #134e5e, #71b280) !important; }
+body.theme-botanical::before { content: '🌿'; position: fixed; top: 15%; left: -20px; font-size: 150px; opacity: 0.3; z-index: 100; pointer-events: none; animation: wave 6s ease-in-out infinite alternate; filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.5)); }
+body.theme-botanical::after { content: '🍃'; position: fixed; bottom: 20%; right: -20px; font-size: 120px; opacity: 0.4; z-index: 100; pointer-events: none; animation: wave 5s ease-in-out infinite alternate-reverse; filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.5)); }
+
+body.theme-stone { background: repeating-radial-gradient(circle at center, #3a3a3a, #2c2c2c 10px, #1a1a1a 30px, #0f0f0f 100px) !important; color: #d0d0d0; }
+body.theme-cyber { background: #050a0f !important; background-image: linear-gradient(rgba(0, 229, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 229, 255, 0.1) 1px, transparent 1px) !important; background-size: 30px 30px !important; animation: cyberGrid 20s linear infinite; }
+@keyframes cyberGrid { 0% { background-position: 0 0; } 100% { background-position: 0 1000px; } }
+
+body.theme-islamic { background: radial-gradient(circle at top, #1c3d5a, #0f2027) !important; }
+body.theme-islamic::before { content: '🕌'; position: fixed; top: 30%; left: 50%; transform: translateX(-50%); font-size: 350px; opacity: 0.04; z-index: 100; pointer-events: none; }
+
+body.theme-snow { background: linear-gradient(180deg, #1e3c72, #2a5298, #b6fbff) !important; }
+body.theme-snow::before { content: '❄️'; position: fixed; top: -10%; left: 5%; font-size: 20px; opacity: 0.6; z-index: 100; pointer-events: none; letter-spacing: 60px; animation: snowFall 12s linear infinite; }
+body.theme-snow::after { content: '❄️'; position: fixed; top: -10%; left: 25%; font-size: 30px; opacity: 0.4; z-index: 100; pointer-events: none; letter-spacing: 90px; animation: snowFall 16s linear infinite 5s; }
+
+@keyframes snowFall { 0% { top: -10%; transform: translateX(0) rotate(0deg); } 100% { top: 110%; transform: translateX(50px) rotate(360deg); } }
+@keyframes wave { 0% { transform: rotate(-5deg); } 100% { transform: rotate(15deg); } }
+
+
+/* --- الخلفيات الجديدة --- */
+/* 1. زهري بناتي */
+body.theme-pink { background: linear-gradient(135deg, #ff9a9e, #fecfef) !important; color: #111 !important; }
+body.theme-pink .setting-card, body.theme-pink .prayer-row { background: rgba(255,255,255,0.4) !important; border-color: rgba(0,0,0,0.1) !important; color: #000; }
+body.theme-pink .setting-title { color: #d81b60 !important; }
+
+/* 2. أخضر شبابي */
+body.theme-lightgreen { background: linear-gradient(135deg, #a8ff78, #78ffd6) !important; color: #111 !important; }
+body.theme-lightgreen .setting-card, body.theme-lightgreen .prayer-row { background: rgba(255,255,255,0.4) !important; border-color: rgba(0,0,0,0.1) !important; color: #000; }
+body.theme-lightgreen .setting-title { color: #004d40 !important; }
+
+/* 3. خلفية حرف M الفخمة */
+body.theme-m {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364) !important;
+    position: relative;
+    z-index: 1;
+}
+/* رسم حرف M كعلامة مائية شفافة في الخلفية */
+body.theme-m::after {
+    content: "M";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 60vh; /* حجم عملاق يغطي الشاشة */
+    color: rgba(255, 215, 0, 0.04); /* لون ذهبي شفاف جداً */
+    font-weight: 900;
+    font-family: Arial, sans-serif;
+    z-index: -1; /* ليكون تحت كل الأزرار والكلام */
+    pointer-events: none; /* لكي لا يمنع الضغط على الأزرار */
+}
+/* =====================================================
+   أشكال الأيقونات والواجهة (UI Shapes)
+   ===================================================== */
+/* 1. إسلامي يحوي نقشات (حواف مقوسة كالقباب) */
+[data-ui="islamic"] .date-pill, [data-ui="islamic"] .countdown-card, [data-ui="islamic"] .prayer-row { border-radius: 25px 0 25px 0 !important; border-color: #FFD700 !important; }
+[data-ui="islamic"] .nav-icon, [data-ui="islamic"] .date-icon { filter: drop-shadow(0 0 5px #FFD700); }
+
+/* 2. ثلجي (حواف دائرية ناعمة جداً ومضيئة) */
+[data-ui="snow"] .date-pill, [data-ui="snow"] .countdown-card, [data-ui="snow"] .prayer-row { border-radius: 40px !important; border-color: rgba(255,255,255,0.6) !important; box-shadow: 0 0 15px rgba(255,255,255,0.2) !important; }
+
+/* 3. حجري (حواف قوية مربعة وظل صلب) */
+[data-ui="stone"] .date-pill, [data-ui="stone"] .countdown-card, [data-ui="stone"] .prayer-row { border-radius: 6px !important; border: 2px solid #777 !important; box-shadow: 3px 3px 0 #444 !important; }
+
+/* 4. قديم (نقوش مقطعة وألوان باهتة) */
+[data-ui="old"] .date-pill, [data-ui="old"] .countdown-card, [data-ui="old"] .prayer-row { border-radius: 0 !important; border: 1px dashed #d4af37 !important; background: rgba(139, 69, 19, 0.15) !important; }
+[data-ui="old"] .nav-icon, [data-ui="old"] .date-icon { filter: sepia(1) brightness(0.9); }
+
+/* 5. ضوئي حديث (إضاءة نيون قوية) */
+[data-ui="neon"] .date-pill, [data-ui="neon"] .countdown-card, [data-ui="neon"] .prayer-row { border-radius: 12px !important; border-color: #00e5ff !important; box-shadow: 0 0 10px rgba(0,229,255,0.4), inset 0 0 5px rgba(0,229,255,0.2) !important; }
+[data-ui="neon"] .nav-icon, [data-ui="neon"] .date-icon { filter: drop-shadow(0 0 8px #00e5ff); }
+
+
+
+
+
+
+
+
+
+/* 1. ضبط حدود الشاشة لتطابق أي هاتف بالضبط */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden; /* منع تحرك الشاشة يميناً ويساراً */
+    -webkit-tap-highlight-color: transparent; /* إزالة المربع الأزرق المزعج عند الضغط على الأزرار */
+    user-select: none; /* منع تحديد النصوص كأننا في تطبيق حقيقي */
+}
+
+/* الحاوية التي تضم كل عناصر التطبيق */
+.app-wrapper {
+    width: 100%;
+    height: 100%;
+    max-width: 500px; /* لكي يبدو كشاشة هاتف حتى لو فتحته من الكمبيوتر */
+    margin: 0 auto;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto; /* السماح بالنزول للأسفل فقط إذا كانت الشاشة صغيرة */
+}
+
+/* 2. برمجة حركة القائمة الجانبية (من الحد إلى الداخل) */
+#side-menu {
+    position: fixed;
+    top: 0;
+    right: -100%; /* مخفية تماماً خارج حافة الشاشة اليمنى */
+    width: 75%; /* تأخذ 75% من حجم الشاشة عند فتحها */
+    max-width: 300px;
+    height: 100vh; /* بطول الشاشة بالكامل */
+    background: #0f2027; /* لون خلفية القائمة (يمكنك تغييره) */
+    z-index: 1000; /* لكي تظهر فوق كل شيء */
+    transition: right 0.4s ease-in-out; /* حركة الانزلاق الناعمة */
+    box-shadow: -5px 0 15px rgba(0,0,0,0.5); /* ظل خفيف لتبدو بارزة */
+}
+
+/* هذا الكلاس يتم تفعيله برمجياً عند الضغط على الثلاث شخطات */
+#side-menu.open {
+    right: 0; /* التصاق القائمة بالحد الأيمن تماماً للداخل */
+}
+
+/* 3. الغطاء الشفاف الذي يغطي باقي الشاشة عند فتح القائمة */
+#menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.6); /* تعتيم الشاشة بنسبة 60% */
+    z-index: 999; /* تحت القائمة ولكن فوق التطبيق */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+}
+
+#menu-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* --- أزرار ألوان الخط في الإعدادات --- */
+.text-color-btn { padding: 12px 5px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); font-family: 'Tajawal'; font-weight: bold; cursor: pointer; transition: 0.3s; text-align: center; }
+.text-color-btn.active { transform: scale(1.1); box-shadow: 0 0 15px rgba(255,255,255,0.3); border-width: 3px; }
+
+/* --- تأثيرات تغيير ألوان التطبيق --- */
+body.text-white, body.text-white .prayer-name, body.text-white .prayer-time { color: #ffffff !important; }
+
+/* اللون الأسود يحتاج لإزالة التوهج ليكون واضحاً */
+body.text-black, body.text-black .prayer-name, body.text-black .prayer-time, body.text-black .page-title, body.text-black .setting-title, body.text-black span { color: #000000 !important; text-shadow: none !important; }
+body.text-black .setting-card, body.text-black .prayer-row { background: rgba(255,255,255,0.6) !important; border-color: rgba(0,0,0,0.2) !important; }
+
+body.text-gold, body.text-gold .prayer-name, body.text-gold .prayer-time { color: #FFD700 !important; }
+body.text-cyan, body.text-cyan .prayer-name, body.text-cyan .prayer-time { color: #00e5ff !important; }
+
+
+/* =========================================
+   🚀 كود الأداء الآمن (مخفف لمنع تعليق الأجهزة)
+   ========================================= */
+
+/* 1. القضاء على اللمضة البيضاء */
+html {
+    background-color: #050a0e !important;
+}
+
+/* 2. دخول ناعم وآمن للصفحات */
+body {
+    animation: smoothLoad 0.3s ease-out forwards;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+@keyframes smoothLoad {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* 3. منع تحديد النصوص بالخطأ (بدون إرهاق كرت الشاشة) */
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.selectable {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+html, body {
+    overscroll-behavior-y: none; /* يمنع سحب الشاشة المطاطي (الباونس) */
+    touch-action: manipulation; /* يمنع الزوم عند النقر المزدوج السريع على الأدعية */
+}
+
+/* منع عداد الوقت من النزول لسطر جديد وتصغيره قليلاً ليناسب الشاشة */
+#countdown-timer {
+    white-space: nowrap !important;
+    font-size: 2.2rem !important; 
+    letter-spacing: 2px;
+}
+
+/* منع أي نص في التطبيق من الخروج خارج حدوده */
+.prayer-row, .setting-card, .btn {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+
+/* تنسيق زر المشاركة */
+.share-btn {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid #FFD700;
+    color: #FFD700;
+    padding: 12px;
+    border-radius: 10px;
+    width: 85%;
+    margin: 20px auto;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: 0.3s;
+}
+.share-btn:active {
+    background: rgba(255, 215, 0, 0.3);
+    transform: scale(0.95);
+}
+
+/* =========================================
+   🚀 تعديلات تكبير الواجهة بعد حذف الشريط السفلي
+   ========================================= */
+
+/* 1. إخفاء الشريط السفلي (احتياطياً) وتقليل الفراغ السفلي */
+.bottom-nav {
+    display: none !important;
+}
+
+html, body, .app-wrapper, .container {
+    padding-bottom: 10px !important; /* إلغاء الفراغ الضخم في الأسفل */
+}
+
+/* 2. تكبير بطاقة العداد العلوية */
+.countdown-card {
+    padding: 25px 20px !important;
+    margin-bottom: 25px !important;
+    border-radius: 20px !important;
+}
+
+#countdown-timer {
+    font-size: 3rem !important; /* تكبير العداد بشكل ملحوظ */
+    margin-top: 10px !important;
+}
+
+#countdown-label {
+    font-size: 1.3rem !important;
+}
+
+/* 3. تكبير صفوف أوقات الصلاة لتملأ الشاشة */
+.prayer-row {
+    padding: 20px 25px !important; /* زيادة الارتفاع */
+    margin-bottom: 12px !important; /* زيادة المسافة بين الصلوات */
+    border-radius: 18px !important;
+}
+
+.prayer-name {
+    font-size: 1.5rem !important; /* تكبير اسم الصلاة */
+    font-weight: bold !important;
+}
+
+.prayer-time {
+    font-size: 1.7rem !important; /* تكبير وقت الصلاة */
+    font-weight: 900 !important;
+}
+
+/* 4. تكبير أيقونة الصلاة الحالية (النشطة) لتكون بارزة جداً */
+.active-prayer {
+    transform: scale(1.03); /* إبراز الصلاة القادمة للأمام */
+    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3) !important;
+}
+
+
+
+
+
+
+/* =========================================
+   🚀 التحديث النهائي: انتقالات سلسة وتثبيت الأبعاد
+   ========================================= */
+
+/* 1. منع اللمضة البيضاء بجعل جذور المتصفح داكنة */
+html {
+    background-color: #050a0e !important; /* لون مقارب لخلفية التطبيق */
+}
+
+
+/* 3. تثبيت أبعاد التطبيق كإطار هاتف ثابت ومنع التداخل */
+html, body {
+    margin: 0 !important; 
+    padding: 0 !important;
+    height: 100% !important; 
+    min-height: 100dvh !important; 
+    max-height: 100dvh !important;
+    overflow: hidden !important; /* منع الشاشة من القفز نهائياً */
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+}
+
+/* 4. الحاوية الخارجية التي تتنسق مع أي هاتف */
+.app-wrapper, .container, .hisn-container, .sebha-container, .settings-container {
+    width: 100% !important;
+    max-width: 480px !important; /* تثبيت العرض الأقصى للأجهزة الكبيرة */
+    margin: 0 auto !important; /* التوسيط في الشاشة */
+    height: 100%;
+    overflow-y: auto; /* السماح بالتمرير داخل هذا الإطار فقط */
+    overflow-x: hidden;
+    padding-bottom: 90px !important;
+}
+
+/* 5. تثبيت المسافات بين الصلوات لمنع التباعد العشوائي */
+.prayer-row {
+    margin-bottom: 12px !important; /* مسافة ثابتة دائماً */
+    padding: 15px 20px !important; /* حجم ثابت */
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+}
+
+
+
+/* =========================================
+   🚀 الإصلاح الشامل: ديناميكية الصلوات والتصفح
+   ========================================= */
+
+/* 1. إصلاح التصفح في كافة الأقسام (إلغاء التجمد) */
+html {
+    background-color: #050a0e !important;
+    height: 100% !important;
+    overflow: hidden !important; 
+    display: flex !important;
+    justify-content: center !important;
+}
+
+body {
+    width: 100% !important;
+    max-width: 480px !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-y: auto !important; /* السماح بالتصفح الداخلي والنزول */
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important; /* تصفح ناعم جداً للهواتف */
+}
+
+/* 2. جعل قائمة الصلوات ذكية لتسع جميع الصلوات (بما فيها العشاء) */
+.prayer-list {
+    flex: 1 !important; /* تأخذ المساحة المتبقية بذكاء */
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important; /* توزيع المسافات بالتساوي */
+    padding: 5px 20px 15px !important;
+    gap: 8px !important; /* مسافة ديناميكية بين الصلوات */
+    overflow: hidden !important; /* الشاشة الرئيسية ثابتة ولا تحتاج تصفح */
+}
+
+.prayer-row {
+    flex: 1 !important; /* تتمدد وتتقلص حسب طول شاشتك */
+    min-height: 45px !important; /* تصغير الحد الأدنى */
+    max-height: 70px !important;
+    margin-bottom: 0 !important; /* نعتمد على الفراغ الذكي gap */
+    padding: 0 25px !important;
+}
+
+.prayer-name { font-size: 1.2rem !important; }
+.prayer-time { font-size: 1.4rem !important; }
+
+/* 3. ضمان مساحة سفلية مريحة للتصفح في أقسام الأذكار */
+.adhkar-container, .dua-container, .hisn-container, .settings-container, .contact-container {
+    padding-bottom: 100px !important;
+}
+
+
+
+
+
+
+
+/* =========================================
+   🚀 الإصلاح النهائي لشكل بطاقة العداد والأسهم
+   ========================================= */
+.countdown-card {
+    width: calc(100% - 40px) !important; /* ضمان عدم الخروج من الشاشة أبداً */
+    margin: 15px auto !important;
+    height: 120px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 15px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+.countdown-content {
+    flex: 1 !important;
+    text-align: center !important;
+    min-width: 0 !important; /* يمنع النص الداخلي من تمديد الحاوية */
+    padding: 0 5px !important;
+}
+
+.countdown-label {
+    font-size: 0.95rem !important; /* تصغير الخط قليلاً ليتسع براحة */
+    margin-bottom: 5px !important;
+    white-space: normal !important; /* السماح للنص بالنزول لسطرين بدلاً من القطع */
+    overflow: visible !important;
+    line-height: 1.3 !important;
+    color: var(--accent-gold) !important;
+    font-weight: 700 !important;
+}
+
+
+#countdown-timer {
+    font-size: 2.1rem !important; /* تصغير التوقيت ليتناسب مع الأسهم */
+    white-space: nowrap !important;
+    letter-spacing: 2px !important;
+}
+
+.nav-arrow {
+    width: 42px !important;
+    height: 42px !important;
+    flex-shrink: 0 !important; /* يمنع انضغاط الأسهم */
+    margin: 0 !important;
+}
+
+
+/* =========================================
+   🚀 الإصلاح النهائي لبطاقات التواريخ العلوية
+   ========================================= */
+
+/* (استبدل .date-card باسم الكلاس الذي تستخدمه للبطاقات العلوية إذا كان مختلفاً) */
+.date-card, .gregorian-date, .hijri-date, .day-name, .top-bar > div {
+    display: flex !important;
+    flex-direction: row !important; /* إجبار النص والأيقونة في خط أفقي */
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important; /* السر هنا: يمنع النزول لسطر جديد نهائياً */
+    overflow: hidden !important;
+    gap: 8px !important; /* مسافة ثابتة بين الأيقونة والرقم */
+    padding: 0 10px !important;
+    height: 45px !important; /* تثبيت الارتفاع لكي لا تتمدد البطاقة */
+}
+
+/* تصغير الخط قليلاً إذا كانت شاشة الهاتف صغيرة جداً لتجنب القص */
+@media (max-width: 360px) {
+    .date-card, .gregorian-date, .hijri-date, .day-name, .top-bar > div {
+        font-size: 0.9rem !important;
+        padding: 0 5px !important;
+    }
+}
+
+
+/* =========================================
+   🚀 التنظيف الشامل وإصلاح تداخل أسفل الشاشة
+   ========================================= */
+html, body {
+    height: 100% !important;
+    min-height: 100vh !important;
+    overflow: hidden !important; 
+}
+
+body {
+    overflow-y: auto !important;
+    /* مسافة أمان إجبارية تحمي المحتوى من أزرار الهاتف السفلية */
+    padding-bottom: env(safe-area-inset-bottom, 30px) !important;
+}
+
+.prayer-list, .container, .hisn-container, .settings-container, .dua-container {
+    padding-bottom: 45px !important; /* رفع المحتوى للأعلى قليلاً لكي لا يختفي */
+    margin-bottom: 15px !important;
+}
+
+.prayer-row {
+    min-height: 60px !important; /* تثبيت ارتفاع الصلاة لتبدو مرتبة دائماً */
+    max-height: 75px !important;
+}
+
+/* =========================================
+   🚀 الإصلاح الشامل: السرعة ومنع التداخل
+   ========================================= */
+
+/* دخول صاروخي ونظيف للصفحات بدون شاشة سوداء */
+body {
+    animation: fadeInFast 0.2s ease-out forwards !important;
+}
+@keyframes fadeInFast {
+    0% { opacity: 0; transform: scale(0.98); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* حل مشكلة التداخل من الأسفل في كل الشاشات بشكل قطعي */
+.prayer-list, .categories-grid, .settings-container, .dua-list, .content-container, .hisn-container {
+    padding-bottom: 120px !important; 
+    margin-bottom: 20px !important;
+}

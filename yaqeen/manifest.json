@@ -1,0 +1,23 @@
+{
+  "name": "مواقيت صلاة اليقين لمدينة بغداد",
+  "short_name": "مواقيت الصلاة",
+  "description": "تطبيقك الشامل لمواقيت الصلاة الدقيقة لمدينة بغداد، يحتوي على الأذكار، حصن المسلم، والسنن اليومية. يعمل بدون إنترنت.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#050a0e",
+  "theme_color": "#FFD700",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

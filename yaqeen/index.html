@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <link rel="icon" href="logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+
+    <title>اليقين - مواقيت الصلاة</title>
+    <link rel="icon" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="manifest" href="manifest.json">
+
+    <meta property="og:title" content="تطبيق مواقيت صلاة اليقين لمدينة بغداد">
+    <meta property="og:description" content="تطبيقك الشامل لمواقيت الصلاة، الأذكار، وحصن المسلم.,السنن ,الاستخارة">
+    <meta property="og:image" content="https://al-yaqeen-2026.netlify.app/logo.jpg">
+    <meta property="og:type" content="website">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="logo.png">
+</head>
+<body>
+    <link rel="prefetch" href="hisn.html">
+    <link rel="prefetch" href="azkar_salah.html">
+    <link rel="prefetch" href="adhksr.html">
+    <link rel="prefetch" href="sunnah.html">
+    <link rel="prefetch" href="dua.html">
+    <link rel="prefetch" href="istikhara.html">
+    <link rel="prefetch" href="settings.html">
+
+    <audio id="audio-click" src="audio/click.mp3" preload="auto"></audio>
+    <audio id="audio-alert5" src="audio/adhan.mp3" preload="auto"></audio>
+    <audio id="audio-adhan" src="audio/adhan.mp3" preload="auto"></audio>
+
+    <header class="app-header">
+        <button class="icon-btn menu-btn" id="btn-menu" aria-label="القائمة">
+            <span></span><span></span><span></span>
+        </button>
+        
+        <button class="icon-btn" id="btn-tip" aria-label="نصيحة اليوم">💡</button>
+        
+        <h1 class="app-title">اليقين</h1>
+    </header>
+
+    <div class="date-bar">
+        <div class="date-pill hijri"><span class="date-icon">🌙</span><span id="hijri-date">--</span></div>
+        <div class="date-pill gregorian active"><span id="day-name">--</span></div>
+        <div class="date-pill gregorian"><span class="date-icon">📅</span><span id="greg-date">--</span></div>
+    </div>
+
+    <div class="countdown-card">
+        <button class="nav-arrow right-arrow" id="btn-prev-prayer">&#10095;</button>
+        <div class="countdown-content">
+            <p class="countdown-label" id="countdown-label">جاري الحساب...</p>
+            <p class="countdown-timer" id="countdown-timer">00 : 00</p>
+        </div>
+        <button class="nav-arrow left-arrow" id="btn-next-prayer">&#10094;</button>
+    </div>
+
+    <main class="prayer-list" id="prayer-list"></main>
+
+    
+
+    <div class="menu-overlay" id="menu-overlay"></div>
+    <aside class="side-menu" id="side-menu">
+        <div class="menu-header"><span class="menu-logo">اليقين</span></div>
+        <nav class="menu-nav">
+            <a href="adhksr.html" class="menu-link">🌅  الأذكار الصباح و المساء</a>
+            <a href="azkar_salah.html" class="menu-link">🕌 أذكار بعد الصلاة</a>
+        
+            <a href="hisn.html" class="menu-link">🏰 حصن المسلم</a>
+            <a href="sunnah.html" class="menu-link">⭐ السنن اليومية</a>
+            <a href="dua.html" class="menu-link">🤲 الأدعية</a>
+            <a href="istikhara.html" class="menu-link">🧭 صلاة الاستخارة</a>
+            <button id="share-app-btn" style="background: rgba(255,215,0,0.1); border: 1px solid #FFD700; color: #FFD700; padding: 10px; border-radius: 10px; width: 100%; font-family: 'Tajawal'; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 20px;">
+    <span>🔗</span> شارك لأخوك الأجر
+</button>
+        </nav>
+        <div class="menu-footer">
+            <a href="settings.html" class="menu-link">⚙️ الإعدادات</a>
+            <a href="contact.html" class="menu-link">📞 اتصل بنا</a>
+        </div>
+    </aside>
+
+    <div class="lamp-modal" id="lamp-modal">
+        <div class="lamp-content">
+            <button class="close-lamp" id="close-lamp">&times;</button>
+            <div class="lamp-icon-big">💡</div>
+            <div class="lamp-text" id="lamp-text">جاري تحميل الفائدة...</div>
+        </div>
+    </div>
+
+    <script src="prayers.js"></script>
+    <script src="app.js"></script>
+    
+<audio id="audio-click" src="./audio/click.mp3" preload="auto"></audio>
+<audio id="audio-alert5" src="./audio/adhan.mp3" preload="auto"></audio>
+<audio id="audio-adhan" src="./audio/adhan.mp3" preload="auto"></audio>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('تم تشغيل الأوفلاين بنجاح!'))
+            .catch(err => console.log('خطأ في تشغيل الأوفلاين:', err));
+        });
+    }
+</script>
+
+</body>
+</html>
