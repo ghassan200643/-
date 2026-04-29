@@ -2,7 +2,7 @@
       "relation": ["delegate_permission/common.handle_all_urls"],
       "target": {
         "namespace": "android_app",
-        "package_name": "yageen.com",
-        "sha256_cert_fingerprints": ["6A:DD:82:01:DA:92:C8:8B:49:0F:22:7F:0E:79:02:3D:6C:A9:C2:1D:19:83:A2:37:6A:0D:E7:DD:34:B7:13:93"]
+        "package_name": "yageen1.com",
+        "sha256_cert_fingerprints": ["FA:3A:B1:D4:42:C5:6E:16:64:73:2D:F9:F8:DD:91:02:1D:26:37:3B:68:C1:BD:DA:68:65:75:BA:2D:A9:C2:0D"]
       }
     }]
